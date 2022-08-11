@@ -311,6 +311,7 @@ namespace JavaUtilities{
         /// <summary>
         /// Returns an empty <see cref="Optional{T}"/> instance.
         /// </summary>
+        /// <typeparam name="T">The type of the value contained in this Optional</typeparam>
         /// <returns>Returns an empty Optional</returns>
         public static Optional<T> Empty<T>(){
             return Optional<T>.EMPTY;
@@ -321,6 +322,7 @@ namespace JavaUtilities{
         /// If the value given is <c>null</c>, an
         /// <see cref="ArgumentNullException"/> will be thrown.
         /// </summary>
+        /// <typeparam name="T">The type of the value contained in this Optional</typeparam>
         /// <param name="valueIn">The value to wrap in an optional</param>
         /// <returns>An optional containing the given value</returns>
         public static Optional<T> Of<T>(T valueIn){
@@ -332,6 +334,7 @@ namespace JavaUtilities{
         /// If the value given is <c>null</c>, an empty optional will be
         /// returned.
         /// </summary>
+        /// <typeparam name="T">The type of the value contained in this Optional</typeparam>
         /// <param name="valueIn">The value to wrap in an optional</param>
         /// <returns>An optional containing the given value, or an empty
         /// optional if the given value is <c>null</c></returns>

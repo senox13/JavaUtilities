@@ -37,7 +37,7 @@ namespace JavaUtilities{
          * Private methods
          */
         /// <summary>
-        /// Attempts to load the next valid service type from
+        /// Attempts to load the next valid service provider from
         /// <c>assemblyEnumerator</c> and cache both the instance and the
         /// provider for that type.
         /// </summary>
@@ -85,7 +85,7 @@ namespace JavaUtilities{
         /// Gets an <see cref="IEnumerable{IProvider}"/> of the providers
         /// which represents implementing instances of this service.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An enumerable of the providers for this service</returns>
         public IEnumerable<IProvider> GetSuppliers(){
             if(loadedAllProviders){
                 return loadedProviders;
@@ -94,10 +94,10 @@ namespace JavaUtilities{
         }
 
         /// <summary>
-        /// Returns an <see cref="Optional{S}"/> containing the first
-        /// available implementation of this <see cref="ServiceLoader{S}"/>'s
-        /// service, or an empty optional if no implementaion of the service
-        /// is available. The order by which the first implementation is
+        /// Returns an <see cref="Optional{S}"/> containing this
+        /// <see cref="ServiceLoader{S}"/>'s first available service provider,
+        /// or an empty optional if no implementaion of the service is
+        /// available. The order by which the first implementation is
         /// determined is completely arbitrary.
         /// </summary>
         /// <returns>The first available implementaiton of this loader's
@@ -112,6 +112,8 @@ namespace JavaUtilities{
 
         /// <summary>
         /// Resets this <see cref="ServiceLoader{S}"/>, clearing its cache.
+        /// Existing enumerators must not be used after this method is
+        /// invoked.
         /// </summary>
         public void Reload(){
             assemblyEnumerator.Reset();
@@ -150,7 +152,8 @@ namespace JavaUtilities{
          * Nested types
          */
         /// <summary>
-        /// Represents a provider for a service implementation.
+        /// Represents a single service provider available to this
+        /// <see cref="ServiceLoader{S}"/>.
         /// </summary>
         public interface IProvider{
             /// <summary>

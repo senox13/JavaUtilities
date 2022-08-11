@@ -71,6 +71,8 @@ namespace JavaUtilities{
         /// <summary>
         /// Compares the contents of two arrays.
         /// </summary>
+        /// <typeparam name="T">The type of the array. Should usually not need
+        /// to be explicitly specified</typeparam>
         /// <param name="a">The first array to compare</param>
         /// <param name="b">The second array to compare</param>
         /// <returns><c>true</c> if the given arrays are equal,
@@ -95,6 +97,8 @@ namespace JavaUtilities{
         /// Returns the string representation of the contents of the given
         /// array. If the array is null, returns <c>null</c>.
         /// </summary>
+        /// <typeparam name="T">The type of the array. Should usually not need
+        /// to be explicitly specified</typeparam>
         /// <param name="objects">The array of objects to convert to a string</param>
         /// <returns>The string representation of the given array</returns>
         public static string ToString<T>(T[] objects){
