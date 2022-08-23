@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace JavaUtilities{
@@ -27,9 +28,13 @@ namespace JavaUtilities{
         /*
          * Constructors
          */
-        internal ServiceLoader(Assembly assembly){
+        internal ServiceLoader(params Assembly[] assemblies){
             service = typeof(S);
-            assemblyEnumerator = assembly.ExportedTypes.GetEnumerator();
+            IEnumerable<Type> allTypes = assemblies[0].ExportedTypes;
+            for(int i=1; i<assemblies.Length; i++){
+                allTypes = allTypes.Concat(assemblies[i].ExportedTypes);
+            }
+            assemblyEnumerator = allTypes.GetEnumerator();
         }
 
 
@@ -363,6 +368,31 @@ namespace JavaUtilities{
         /// and assembly</returns>
         public static ServiceLoader<S> Load<S>(Assembly assembly){
             return new ServiceLoader<S>(assembly);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ServiceLoader{S}"/> for service
+        /// implementations within the given assemblies.
+        /// </summary>
+        /// <typeparam name="S">The service type to load</typeparam>
+        /// <param name="assemblies">The assemblies to load services from</param>
+        /// <returns>A new ServiceLoader instance for the given generic type
+        /// and assembly</returns>
+        public static ServiceLoader<S> Load<S>(params Assembly[] assemblies){
+            return new ServiceLoader<S>(assemblies);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ServiceLoader{S}"/> for service
+        /// implementations within all assemblies in the given
+        /// <see cref="AppDomain"/>.
+        /// </summary>
+        /// <typeparam name="S">The service type to load</typeparam>
+        /// <param name="appDomain">The AppDomain to load services from</param>
+        /// <returns>A new ServiceLoader instance for the given generic type
+        /// and assembly</returns>
+        public static ServiceLoader<S> Load<S>(AppDomain appDomain){
+            return new ServiceLoader<S>(appDomain.GetAssemblies());
         }
     }
 }
