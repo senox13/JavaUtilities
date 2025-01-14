@@ -29,7 +29,7 @@ namespace JavaUtilities{
         /// <param name="b">The second object to compare</param>
         /// <returns><c>true</c> if the given objects are equal, otherwise
         /// <c>false</c></returns>
-        public static new bool Equals(object a, object b){
+        public static new bool Equals(object? a, object? b){
             if(a == b){
                 return true;
             }
@@ -43,7 +43,7 @@ namespace JavaUtilities{
         /// <param name="o">The object to get the hashcode of</param>
         /// <returns>The hashcode of the given object if non-<c>null</c>,
         /// othwerise <c>0</c></returns>
-        public static int HashCode(object o){
+        public static int HashCode(object? o){
             if(o == null) return 0;
             return o.GetHashCode();
         }
@@ -67,7 +67,7 @@ namespace JavaUtilities{
         /// </summary>
         /// <param name="o">The object to convert to a string</param>
         /// <returns>The string form of the given object</returns>
-        public static string ToString(object o){
+        public static string? ToString(object? o){
             return ToString(o, "null");
         }
 
@@ -81,7 +81,7 @@ namespace JavaUtilities{
         /// given object is null</param>
         /// <returns>The string form of the given object, or the given default
         /// if the given object is null</returns>
-        public static string ToString(object o, string nullDefault){
+        public static string? ToString(object? o, string? nullDefault){
             if(o == null)
                 return nullDefault;
             return o.ToString();

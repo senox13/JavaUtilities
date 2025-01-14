@@ -6,13 +6,13 @@ using JavaUtilities.Collections;
 namespace JavaUtilitiesTests.Collections{
     [TestFixture]
     public class TableTests{
-        private Table<string, int, int> testTable;
-        private static readonly string[] nums = {"zero", "one", "two", "three"};
+        private Table<string, int, int> testTable = null!;
+        private static readonly string[] nums = ["zero", "one", "two", "three"];
         
         
         [SetUp]
         public void SetUp(){
-            testTable = new Table<string, int, int>();
+            testTable = [];
             for(int r=1; r<=3; r++){
                 for(int c=1; c<=3; c++){
                     testTable.Add(nums[r], c, r*c);
@@ -48,7 +48,7 @@ namespace JavaUtilitiesTests.Collections{
         
         [Test]
         public void RowKeys(){
-            List<string> rowKeys = new List<string>(testTable.RowKeys);
+            List<string> rowKeys = new(testTable.RowKeys);
             Assert.AreEqual(3, rowKeys.Count);
             for(int i=1; i<=3; i++){
                 Assert.IsTrue(rowKeys.Contains(nums[i]));
@@ -58,7 +58,7 @@ namespace JavaUtilitiesTests.Collections{
         
         [Test]
         public void ColKeys(){
-            List<int> colKeys = new List<int>(testTable.ColKeys);
+            List<int> colKeys = new(testTable.ColKeys);
             Assert.AreEqual(3, colKeys.Count);
             for(int i=1; i<=3; i++){
                 Assert.IsTrue(colKeys.Contains(i));
@@ -142,11 +142,11 @@ namespace JavaUtilitiesTests.Collections{
         
         [Test]
         public void AddAll(){
-            List<Tuple<string, int, int>> values = new List<Tuple<string, int, int>>{
+            List<Tuple<string, int, int>> values = [
                 new Tuple<string, int, int>(nums[1], 4, 4),
                 new Tuple<string, int, int>(nums[2], 4, 8),
                 new Tuple<string, int, int>(nums[3], 4, 12)
-            };
+            ];
             testTable.AddAll(values);
             Assert.AreEqual(12, testTable.Count);
             Assert.AreEqual(12, testTable[nums[3], 4]);
@@ -162,7 +162,7 @@ namespace JavaUtilitiesTests.Collections{
         
         [Test]
         public void GetHashCodeAndEquals(){
-            Table<string, int, int> otherTable = new Table<string, int, int>(testTable);
+            Table<string, int, int> otherTable = new(testTable);
             Assert.IsFalse(testTable.Equals(otherTable));
             Assert.AreNotEqual(testTable.GetHashCode(), otherTable.GetHashCode());
         }

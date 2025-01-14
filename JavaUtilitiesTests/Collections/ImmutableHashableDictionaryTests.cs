@@ -10,7 +10,7 @@ namespace JavaUtilitiesTests.Collections{
          * Fields
          */
         private const string TESTDICT_STR = "{one=1, two=2}";
-        private ImmutableHashableDictionary<string, int> testDict;
+        private ImmutableHashableDictionary<string, int> testDict = null!;
         
         
         /*

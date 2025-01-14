@@ -15,11 +15,11 @@ namespace JavaUtilities{
     /// (performs an action if a value is present).
     /// </summary>
     /// <typeparam name="T">The type of the value contained in this Optional</typeparam>
-    public struct Optional<T> : IEnumerable<T>{
+    public readonly struct Optional<T> : IEnumerable<T>{
         /*
          * Fields
          */
-        internal readonly static Optional<T> EMPTY = new Optional<T>(default, true);
+        internal readonly static Optional<T> EMPTY = new(default!, true);
         private readonly bool isEmpty;
         private readonly T value;
 
@@ -112,9 +112,7 @@ namespace JavaUtilities{
         /// value is present and matches the given predicate, otherwise an
         /// empty optional</returns>
         public Optional<T> Filter(Predicate<T> predicate){
-            if(predicate == null){
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            ArgumentNullException.ThrowIfNull(predicate, nameof(predicate));
             if(IsEmpty()){
                 return this;
             }
@@ -134,9 +132,7 @@ namespace JavaUtilities{
         /// <returns>An optional containin the value returned by the mapping
         /// function if a value is present, otherwise an empty optional</returns>
         public Optional<U> Map<U>(Func<T, U> mapper){
-            if(mapper == null){
-                throw new ArgumentNullException(nameof(mapper));
-            }
+            ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
             if(IsEmpty()){
                 return Optional.Empty<U>();
             }
@@ -159,9 +155,7 @@ namespace JavaUtilities{
         /// <returns>The optional returned by the mapping function if a value
         /// is present, otherwise an empty optional</returns>
         public Optional<U> FlatMap<U>(Func<T, Optional<U>> mapper){
-            if(mapper == null){
-                throw new ArgumentNullException(nameof(mapper));
-            }
+            ArgumentNullException.ThrowIfNull(mapper, nameof(mapper));
             if(IsEmpty()){
                 return Optional.Empty<U>();
             }
@@ -180,9 +174,7 @@ namespace JavaUtilities{
         /// is present, otherwise the value returned by the given supplier
         /// function</returns>
         public Optional<T> Or(Func<Optional<T>> supplier){
-            if(supplier == null){
-                throw new ArgumentNullException(nameof(supplier));
-            }
+            ArgumentNullException.ThrowIfNull(supplier, nameof(supplier));
             if(IsPresent()){
                 return this;
             }
@@ -247,11 +239,11 @@ namespace JavaUtilities{
          * Override methods
          */
         /// <inheritdoc/>
-        public override bool Equals(object obj){
-            if(obj is Optional<T> other){
-                return ObjectUtils.Equals(value, other.value) && isEmpty == other.isEmpty;
+        public override bool Equals(object? obj){
+            if(obj is not Optional<T> other){
+                return false;
             }
-            return false;
+            return ObjectUtils.Equals(value, other.value) && isEmpty == other.isEmpty;
         }
 
         /// <summary>
@@ -297,6 +289,16 @@ namespace JavaUtilities{
         IEnumerator IEnumerable.GetEnumerator(){
             return GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        public static bool operator ==(Optional<T> left, Optional<T> right){
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc/>
+        public static bool operator !=(Optional<T> left, Optional<T> right){
+            return !left.Equals(right);
+        }
     }
 
     /// <summary>
@@ -338,7 +340,7 @@ namespace JavaUtilities{
         /// <param name="valueIn">The value to wrap in an optional</param>
         /// <returns>An optional containing the given value, or an empty
         /// optional if the given value is <c>null</c></returns>
-        public static Optional<T> OfNullable<T>(T valueIn){
+        public static Optional<T> OfNullable<T>(T? valueIn){
             if(valueIn == null){
                 return Optional<T>.EMPTY;
             }

@@ -8,10 +8,9 @@ namespace JavaUtilitiesTests{
     public class DictUtilsTests{
         [Test]
         public void CreateDict(){
-            Dictionary<int, string> result = DictUtils.CreateDict(
-                new int[]{1, 2, 3},
-                new string[]{"one", "two", "three"}
-            );
+            int[] keys = [1, 2, 3];
+            string[] values = ["one", "two", "three"];
+            Dictionary<int, string> result = DictUtils.CreateDict(keys, values);
             Assert.Multiple(() => {
                 Assert.AreEqual(3, result.Count);
                 Assert.Contains(new KeyValuePair<int, string>(1, "one"), result);
@@ -22,10 +21,9 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void CreateDictDifferentLengths(){
-            Dictionary<int, string> result = DictUtils.CreateDict(
-                new int[]{1, 2, 3, 4, 5},
-                new string[]{"one", "two", "three"}
-            );
+            int[] keys = [1, 2, 3, 4, 5];
+            string[] values = ["one", "two", "three"];
+            Dictionary<int, string> result = DictUtils.CreateDict(keys, values);
             Assert.Multiple(() => {
                 Assert.AreEqual(3, result.Count);
                 Assert.Contains(new KeyValuePair<int, string>(1, "one"), result);
@@ -37,22 +35,22 @@ namespace JavaUtilitiesTests{
         //There is no need to test PopulateDict's standard behaviour, as it is always invoked by CreateDict
         [Test]
         public void PopulateDictDuplicateKey(){
-            Dictionary<int, string> dict = new Dictionary<int, string>{
+            Dictionary<int, string> dict = new(){
                 {1, "one"},
                 {2, "two"},
                 {3, "three"}
             };
-            Assert.Throws<ArgumentException>(() => DictUtils.PopulateDict(new int[]{3, 4}, new string[]{"three", "four"}, dict));
+            Assert.Throws<ArgumentException>(() => DictUtils.PopulateDict([3, 4], ["three", "four"], dict));
         }
 
         [Test]
         public void ContentsHashCode(){
-            Dictionary<int, string> dict = new Dictionary<int, string>(){
+            Dictionary<int, string> dict = new(){
                 {1, "one"},
                 {2, "two"},
                 {3, "three"}
             };
-            Dictionary<int, string> otherDict = new Dictionary<int, string>(){
+            Dictionary<int, string> otherDict = new(){
                 {1, "one"},
                 {2, "two"},
                 {3, "three"}

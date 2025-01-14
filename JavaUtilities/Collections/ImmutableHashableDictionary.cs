@@ -13,7 +13,7 @@ namespace JavaUtilities.Collections{
     /// </summary>
     /// <typeparam name="K">The type of the keys in the dictionary</typeparam>
     /// <typeparam name="V">The type of the values in the dictionary</typeparam>
-    public class ImmutableHashableDictionary<K, V> : IReadOnlyDictionary<K, V>{
+    public class ImmutableHashableDictionary<K, V> : IReadOnlyDictionary<K, V> where K : notnull{
         /*
          * Fields
          */
@@ -80,8 +80,9 @@ namespace JavaUtilities.Collections{
         /// <returns>A new <see cref="ImmutableHashableDictionary{K, V}"/>
         /// instance containing the given key, value pair</returns>
         public ImmutableHashableDictionary<K, V> Add(K newKey, V newValue){
-            Dictionary<K, V> newStorage = new Dictionary<K, V>(storage);
-            newStorage.Add(newKey, newValue);
+            Dictionary<K, V> newStorage = new(storage){
+                [newKey] = newValue
+            };
             return new ImmutableHashableDictionary<K, V>(newStorage);
         }
         
@@ -95,8 +96,9 @@ namespace JavaUtilities.Collections{
         /// <returns>A new <see cref="ImmutableHashableDictionary{K, V}"/>
         /// instance containing the given key, value pair</returns>        
         public ImmutableHashableDictionary<K, V> Set(K key, V newValue){
-            Dictionary<K ,V> newStorage = new Dictionary<K, V>(storage);
-            newStorage[key] = newValue;
+            Dictionary<K ,V> newStorage = new(storage){
+                [key] = newValue
+            };
             return new ImmutableHashableDictionary<K, V>(newStorage);
         }
         
@@ -121,7 +123,7 @@ namespace JavaUtilities.Collections{
         /// <returns>True if the <see cref="ImmutableHashableDictionary{K, V}"/>
         /// contains an element with the specified key; otherwise, false.</returns>
         public bool TryGetValue(K key, out V value){
-            return storage.TryGetValue(key, out value);
+            return storage.TryGetValue(key, out value!);
         }
         
         IEnumerator IEnumerable.GetEnumerator(){
@@ -145,7 +147,7 @@ namespace JavaUtilities.Collections{
         /// </summary>
         /// <returns>A string representation of the contents of this dictionary</returns>
         public override string ToString(){
-            StringBuilder builder = new StringBuilder("{");
+            StringBuilder builder = new("{");
             bool firstEntryAdded = false;
             foreach(KeyValuePair<K, V> pair in this){
                 if(!firstEntryAdded){
@@ -155,7 +157,7 @@ namespace JavaUtilities.Collections{
                 }
                 builder.Append($"{pair.Key}={pair.Value}");
             }
-            return builder.Append("}").ToString();
+            return builder.Append('}').ToString();
         }
         
         /// <summary>
@@ -167,25 +169,27 @@ namespace JavaUtilities.Collections{
         /// instance to compare to</param>
         /// <returns>True if this <see cref="ImmutableHashableDictionary{K, V}"/>
         /// is equal to the given one, otherwise false</returns>
-        public override bool Equals(object obj){
+        public override bool Equals(object? obj){
             if(obj == this)
                 return true;
-            if(obj is ImmutableHashableDictionary<K, V> otherDict){
-                foreach(KeyValuePair<K, V> pair in otherDict){
-                    if(!ContainsKey(pair.Key))
-                        return false;
-                    if(!pair.Value.Equals(this[pair.Key]))
-                        return false;
-                }
-                foreach(KeyValuePair<K, V> pair in this){
-                    if(!otherDict.ContainsKey(pair.Key))
-                        return false;
-                    if(!pair.Value.Equals(otherDict[pair.Key]))
-                        return false;
-                }
-                return true;
+            if(obj is not ImmutableHashableDictionary<K, V> otherDict){
+                return false;
             }
-            return false;
+            foreach(KeyValuePair<K, V> pair in otherDict){
+                if(!ContainsKey(pair.Key))
+                    return false;
+                V value = this[pair.Key];
+                if(!pair.Value?.Equals(value) ?? value != null)
+                    return false;
+            }
+            foreach(KeyValuePair<K, V> pair in this){
+                if(!otherDict.ContainsKey(pair.Key))
+                    return false;
+                V otherValue = otherDict[pair.Key];
+                if(!pair.Value?.Equals(otherValue) ?? otherValue != null)
+                    return false;
+            }
+            return true;
         }
         
         /// <summary>

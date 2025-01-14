@@ -29,7 +29,7 @@ namespace JavaUtilities.Collections{
         /// Constructs a new, empty table.
         /// </summary>
         public Table(){
-            tableStorage = new Dictionary<Tuple<R, C>, V>();
+            tableStorage = [];
         }
         
         /// <summary>
@@ -44,7 +44,7 @@ namespace JavaUtilities.Collections{
         /// <param name="expectedColumns">The number of columns expected to be
         /// in this table</param>
         public Table(int expectedRows, int expectedColumns){
-            tableStorage = new Dictionary<Tuple<R, C>, V>(expectedRows * expectedColumns);
+            tableStorage = new(expectedRows * expectedColumns);
         }
 
         /// <summary>
@@ -80,13 +80,13 @@ namespace JavaUtilities.Collections{
         /// <param name="colKey">The column key of the cell to get or set</param>
         public V this[R rowKey, C colKey]{
             get{
-                Tuple<R, C> keyPair = new Tuple<R, C>(rowKey, colKey);
-                if(!tableStorage.ContainsKey(keyPair))
+                Tuple<R, C> keyPair = new(rowKey, colKey);
+                if(!tableStorage.TryGetValue(keyPair, out V? value))
                     throw new KeyNotFoundException(ERR_BAD_KEY);
-                return tableStorage[keyPair];
+                return value;
             }
             set{
-                Tuple<R, C> keyPair = new Tuple<R, C>(rowKey, colKey);
+                Tuple<R, C> keyPair = new(rowKey, colKey);
                 tableStorage[keyPair] = value;
             }
         }
@@ -102,7 +102,7 @@ namespace JavaUtilities.Collections{
         /// </summary>
         public IEnumerable<R> RowKeys{
             get{
-                HashSet<R> rowVals = new HashSet<R>();
+                HashSet<R> rowVals = [];
                 foreach(Tuple<R, C> pair in tableStorage.Keys){
                     rowVals.Add(pair.Item1);
                 }
@@ -116,7 +116,7 @@ namespace JavaUtilities.Collections{
         /// </summary>
         public IEnumerable<C> ColKeys{
             get{
-                HashSet<C> rowVals = new HashSet<C>();
+                HashSet<C> rowVals = [];
                 foreach(Tuple<R, C> pair in tableStorage.Keys){
                     rowVals.Add(pair.Item2);
                 }
@@ -130,10 +130,7 @@ namespace JavaUtilities.Collections{
         /// </summary>
         public ICollection<V> Values{
             get{
-                List<V> vals = new List<V>();
-                foreach(V val in tableStorage.Values){
-                    vals.Add(val);
-                }
+                List<V> vals = [..tableStorage.Values];
                 return vals;
             }
         }
@@ -159,7 +156,7 @@ namespace JavaUtilities.Collections{
         /// <returns>True if the given key is found, otherwise false</returns>
         public bool ContainsRow(R key){
             foreach(Tuple<R, C> pair in tableStorage.Keys){
-                if(pair.Item1.Equals(key))
+                if(pair.Item1?.Equals(key) ?? key == null)
                     return true;
             }
             return false;
@@ -172,7 +169,7 @@ namespace JavaUtilities.Collections{
         /// <returns>True if the given key is found, otherwise false</returns>
         public bool ContainsColumn(C key){
             foreach(Tuple<R, C> pair in tableStorage.Keys){
-                if(pair.Item2.Equals(key))
+                if(pair.Item2?.Equals(key) ?? key == null)
                     return true;
             }
             return false;

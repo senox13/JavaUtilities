@@ -11,7 +11,7 @@ namespace JavaUtilitiesTests{
         /*
          * Fields
          */
-        private ServiceLoader<IStubService> loader;
+        private ServiceLoader<IStubService> loader = null!;
 
 
         /*
@@ -26,7 +26,7 @@ namespace JavaUtilitiesTests{
         /*
          * Private methods
          */
-        private void AssertServicesLoaded(List<string> serviceNames){
+        private static void AssertServicesLoaded(List<string> serviceNames){
             Assert.Multiple(() => {
                 Assert.AreEqual(4, serviceNames.Count);
                 Assert.Contains("Service A", serviceNames);
@@ -41,7 +41,7 @@ namespace JavaUtilitiesTests{
          */
         [Test]
         public void EnumerateServices(){
-            List<string> serviceNames = new List<string>();
+            List<string> serviceNames = [];
             foreach(IStubService service in loader){
                 serviceNames.Add(service.Name);
             }
@@ -50,7 +50,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void EnumerateServiceProviders(){
-            List<string> serviceNames = new List<string>();
+            List<string> serviceNames = [];
             foreach(ServiceLoader<IStubService>.IProvider provider in loader.GetSuppliers()){
                 serviceNames.Add(provider.Get().Name);
             }
@@ -70,9 +70,9 @@ namespace JavaUtilitiesTests{
         [Test]
         public void ParallelEnumeration(){
             IEnumerator<IStubService> enumA = loader.GetEnumerator();
-            List<string> serviceNamesA = new List<string>();
+            List<string> serviceNamesA = [];
             IEnumerator<IStubService> enumB = loader.GetEnumerator();
-            List<string> serviceNamesB = new List<string>();
+            List<string> serviceNamesB = [];
             while(true){
                 bool aHasNext = enumA.MoveNext();
                 bool bHasNext = enumB.MoveNext();

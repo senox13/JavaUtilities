@@ -9,8 +9,8 @@ namespace JavaUtilitiesTests{
         /*
          * Fields
          */
-        private readonly Random random = new Random();
-        private List<string> list;
+        private readonly Random random = new();
+        private List<string> list = null!;
 
 
         /*
@@ -18,7 +18,7 @@ namespace JavaUtilitiesTests{
          */
         [SetUp]
         public void SetUp(){
-            list = new List<string>{"one", "two", "three"};
+            list = ["one", "two", "three"];
         }
 
 
@@ -27,19 +27,19 @@ namespace JavaUtilitiesTests{
          */
         [Test]
         public void ContentsEqual(){
-            List<string> list2 = new List<string>{"one", "two", "three"};
+            List<string> list2 = ["one", "two", "three"];
             Assert.IsTrue(CollectionUtils.ContentsEqual(list, list2));
         }
 
         [Test]
         public void ContentsEqualNotEqual(){
-            List<string> list2 = new List<string>{"one", "two", "four"};
+            List<string> list2 = ["one", "two", "four"];
             Assert.IsFalse(CollectionUtils.ContentsEqual(list, list2));
         }
 
         [Test]
         public void ContentsEqualDifferentLength(){
-            List<string> list2 = new List<string>{"one", "two", "three", "four"};
+            List<string> list2 = ["one", "two", "three", "four"];
             Assert.IsFalse(CollectionUtils.ContentsEqual(list, list2));
         }
 
@@ -67,7 +67,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void HashCode(){
-            List<int> intList = new List<int>{1, 2, 3, 4};
+            List<int> intList = [1, 2, 3, 4];
             int result = CollectionUtils.HashCode(intList);
             Assert.AreEqual(955331, result);
         }

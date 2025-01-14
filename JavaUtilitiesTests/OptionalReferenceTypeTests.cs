@@ -38,7 +38,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void OfNull(){
-            Assert.Throws<ArgumentNullException>(() => Optional.Of<string>(null));
+            Assert.Throws<ArgumentNullException>(() => Optional.Of<string>(null!));
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void FilterNullPredicate(){
-            Assert.Throws<ArgumentNullException>(() => testOptional.Filter(null));
+            Assert.Throws<ArgumentNullException>(() => testOptional.Filter(null!));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void MapNullPredicate(){
-            Assert.Throws<ArgumentNullException>(() => testOptional.Map<string>(null));
+            Assert.Throws<ArgumentNullException>(() => testOptional.Map<string>(null!));
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void FlatMapNullPredicate(){
-            Assert.Throws<ArgumentNullException>(() => testOptional.FlatMap<string>(null));
+            Assert.Throws<ArgumentNullException>(() => testOptional.FlatMap<string>(null!));
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void OrNullSupplier(){
-            Assert.Throws<ArgumentNullException>(() => testOptional.Or(null));
+            Assert.Throws<ArgumentNullException>(() => testOptional.Or(null!));
         }
         
         [Test]

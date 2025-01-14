@@ -5,34 +5,33 @@ using JavaUtilities;
 namespace JavaUtilitiesTests{
     [TestFixture]
     public class ArrayUtilsTests{
-        private readonly Random random = new Random();
-        private int[] array;
+        private readonly Random random = new();
+        private readonly int[] array = [1, 2, 3, 4, 5];
         
-        
-        [SetUp]
-        public void SetUp(){
-            array = new int[]{1, 2, 3, 4, 5};
-        }
         
         [Test]
         public void Insert(){
-            int[] result = ArrayUtils.Insert(array, 2, 0);
+            int[]? result = ArrayUtils.Insert(array, 2, 0);
             Assert.Multiple(() => {
-                Assert.AreEqual(0, result[2]);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(0, result![2]);
                 Assert.AreEqual(array.Length+1, result.Length);
             });
         }
         
         [Test]
         public void InsertIntoNull(){
-            int[] result = ArrayUtils.Insert(null, 0, 0);
+            int[]? result = ArrayUtils.Insert(null, 0, 0);
             Assert.IsNull(result);
         }
 
         [Test]
         public void InsertNull(){
-            int[] result = ArrayUtils.Insert(array, 0, null);
-            Assert.AreEqual(array.Length, result.Length);
+            int[]? result = ArrayUtils.Insert(array, 0, null);
+            Assert.Multiple(() => {
+                Assert.IsNotNull(result);
+                Assert.AreEqual(array.Length, result!.Length);
+            });
         }
         
         [Test]
@@ -42,16 +41,17 @@ namespace JavaUtilitiesTests{
         
         [Test]
         public void Remove(){
-            int[] result = ArrayUtils.Remove(array, 2);
+            int[]? result = ArrayUtils.Remove(array, 2);
             Assert.Multiple(() => {
-                Assert.AreEqual(array.Length-1, result.Length);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(array.Length-1, result!.Length);
                 Assert.AreEqual(-1, Array.IndexOf(result, 3));
             });
         }
         
         [Test]
         public void RemoveNullArray(){
-            int[] result = ArrayUtils.Remove<int>(null, 0);
+            int[]? result = ArrayUtils.Remove<int>(null, 0);
             Assert.AreEqual(null, result);
         }
         
@@ -74,19 +74,19 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void ContentsEqual(){
-            int[] other = {1, 2, 3, 4, 5};
+            int[] other = [1, 2, 3, 4, 5];
             Assert.IsTrue(ArrayUtils.ContentsEqual(array, other));
         }
 
         [Test]
         public void ContentsEqualDifferentLength(){
-            int[] other = {0, 1, 2, 3};
+            int[] other = [0, 1, 2, 3];
             Assert.IsFalse(ArrayUtils.ContentsEqual(array, other));
         }
 
         [Test]
         public void ContentsEqualNotEqual(){
-            int[] other = {1, 2, 3, 4, 6};
+            int[] other = [1, 2, 3, 4, 6];
             Assert.IsFalse(ArrayUtils.ContentsEqual(array, other));
         }
 
@@ -119,7 +119,7 @@ namespace JavaUtilitiesTests{
 
         [Test]
         public void TestToStringEmpty(){
-            string result = ArrayUtils.ToString(new int[]{});
+            string result = ArrayUtils.ToString(Array.Empty<int>());
             Assert.AreEqual("[]", result);
         }
 

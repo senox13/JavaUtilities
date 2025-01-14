@@ -16,7 +16,7 @@ namespace JavaUtilities{
         /// <param name="index">The starting index to instert values at</param>
         /// <param name="values">The value(s) to insert into the array</param>
         /// <returns>A new array with all of the given elements</returns>
-        public static T[] Insert<T>(T[] array, int index, params T[] values){
+        public static T[]? Insert<T>(T[]? array, int index, params T[]? values){
             if(array == null)
                 return null;
             if(values == null || values.Length == 0)
@@ -41,7 +41,7 @@ namespace JavaUtilities{
         /// <param name="array">The initial array</param>
         /// <param name="index">The index of the element to remove</param>
         /// <returns>A new array with the element at the given index removed</returns>
-        public static T[] Remove<T>(T[] array, int index){
+        public static T[]? Remove<T>(T[]? array, int index){
             if(array == null)
                 return null;
             if(index < 0 || index >= array.Length)
@@ -64,7 +64,7 @@ namespace JavaUtilities{
         /// <param name="items">The array to hash</param>
         /// <returns>A semi-unique integer based on the contents of the given
         /// array</returns>
-        public static int HashCode<T>(T[] items){
+        public static int HashCode<T>(T[]? items){
             return CollectionUtils.HashCode(items);
         }
 
@@ -77,7 +77,7 @@ namespace JavaUtilities{
         /// <param name="b">The second array to compare</param>
         /// <returns><c>true</c> if the given arrays are equal,
         /// otherwise <c>false</c></returns>
-        public static bool ContentsEqual<T>(T[] a, T[] b){
+        public static bool ContentsEqual<T>(T[]? a, T[]? b){
             if(a == b)
                 return true;
             if(a==null || b==null)
@@ -101,7 +101,7 @@ namespace JavaUtilities{
         /// to be explicitly specified</typeparam>
         /// <param name="objects">The array of objects to convert to a string</param>
         /// <returns>The string representation of the given array</returns>
-        public static string ToString<T>(T[] objects){
+        public static string ToString<T>(T[]? objects){
             if(objects == null){
                 return "null";
             }
@@ -109,9 +109,9 @@ namespace JavaUtilities{
             if(iMax == -1){
                 return "[]";
             }
-            StringBuilder builder = new StringBuilder("[");
+            StringBuilder builder = new("[");
             for(int i=0; i<=iMax; i++){
-                builder.Append(objects[i].ToString());
+                builder.Append(objects[i]?.ToString());
                 if(i != iMax){
                     builder.Append(", ");
                 }

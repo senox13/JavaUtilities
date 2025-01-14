@@ -17,7 +17,7 @@ namespace JavaUtilities{
         /// <param name="b">The second enumerable to compare</param>
         /// <returns><c>true</c> if the given enumerables have equal contents,
         /// otherwise <c>false</c></returns>
-        public static bool ContentsEqual<T>(IEnumerable<T> a, IEnumerable<T> b){
+        public static bool ContentsEqual<T>(IEnumerable<T>? a, IEnumerable<T>? b){
             if(a == b)
                 return true;
             if(a == null || b == null)
@@ -46,7 +46,7 @@ namespace JavaUtilities{
         /// <param name="items">The array to hash</param>
         /// <returns>Returns a semi-unique integer based on the contents of
         /// the given enumerable</returns>
-        public static int HashCode<T>(IEnumerable<T> items){
+        public static int HashCode<T>(IEnumerable<T>? items){
             if(items == null)
                 return 0;
             int retVal = 1;

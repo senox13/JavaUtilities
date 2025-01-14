@@ -20,8 +20,8 @@ namespace JavaUtilities{
          */
         private readonly Type service;
         private readonly IEnumerator<Type> assemblyEnumerator;
-        private readonly List<IProvider> loadedProviders = new List<IProvider>();
-        private readonly List<S> instantiatedProviders = new List<S>();
+        private readonly List<IProvider> loadedProviders = [];
+        private readonly List<S> instantiatedProviders = [];
         private bool loadedAllProviders;
 
 
@@ -58,12 +58,12 @@ namespace JavaUtilities{
                 if(service.IsAssignableFrom(cand) && !cand.IsAbstract){
                     //Type implements service, check for factory method
                     IProvider provider;
-                    MethodInfo factoryMethod = cand.GetMethod("Provider", 0, BindingFlags.Public | BindingFlags.Static, null, Type.EmptyTypes, null);
+                    MethodInfo? factoryMethod = cand.GetMethod("Provider", 0, BindingFlags.Public | BindingFlags.Static, null, Type.EmptyTypes, null);
                     if(factoryMethod != null){
                         provider = new ProviderImpl(cand, factoryMethod);
                     }else{
                         //Factory method not found, check for no-arg constructor
-                        ConstructorInfo ctor = cand.GetConstructor(Type.EmptyTypes);
+                        ConstructorInfo? ctor = cand.GetConstructor(Type.EmptyTypes);
                         if(ctor != null){
                             provider = new ProviderImpl(cand, ctor);
                         }else{
@@ -181,8 +181,8 @@ namespace JavaUtilities{
              * Fields
              */
             private readonly Type type;
-            private readonly MethodInfo factoryMethod;
-            private readonly ConstructorInfo ctor;
+            private readonly MethodInfo? factoryMethod;
+            private readonly ConstructorInfo? ctor;
 
 
             /*
@@ -208,9 +208,11 @@ namespace JavaUtilities{
 
             public S Get(){
                 if(factoryMethod != null){
-                    return (S)factoryMethod.Invoke(null, null);
+                    object instance = factoryMethod.Invoke(null, null)
+                        ?? throw new NullReferenceException($"ServiceLoader factory method returned null: {factoryMethod.ReflectedType?.FullName ?? "null" + '.' + factoryMethod.Name}");
+                    return (S)instance;
                 }
-                return (S)ctor.Invoke(null);
+                return (S)ctor!.Invoke(null);
             }
         }
 
@@ -260,7 +262,7 @@ namespace JavaUtilities{
                 return sl.instantiatedProviders[index];
             }}
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => Current!;
 
 
             /*

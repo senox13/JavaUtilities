@@ -6,17 +6,17 @@ using JavaUtilities.Collections;
 namespace JavaUtilitiesTests.Collections{
     [TestFixture]
     public class BiDictionaryTests{
-        private readonly Dictionary<string, int> testDictContents = new Dictionary<string, int>(){
+        private readonly Dictionary<string, int> testDictContents = new(){
             {"one", 1},
             {"two", 2},
             {"three", 3}
         };
-        private BiDictionary<string, int> testDict;
+        private BiDictionary<string, int> testDict = null!;
 
 
         [SetUp]
         public void SetUp(){
-            testDict = new BiDictionary<string, int>(testDictContents);
+            testDict = new(testDictContents);
         }
 
         [Test]
@@ -176,7 +176,7 @@ namespace JavaUtilitiesTests.Collections{
 
         [Test]
         public void RemovePair(){
-            KeyValuePair<string, int> pair = new KeyValuePair<string, int>("one", 1);
+            KeyValuePair<string, int> pair = new("one", 1);
             bool result = testDict.Remove(pair);
             Assert.Multiple(() => {
                 Assert.IsTrue(result);
@@ -186,7 +186,7 @@ namespace JavaUtilitiesTests.Collections{
 
         [Test]
         public void RemovePairNotPresent(){
-            KeyValuePair<string, int> pair = new KeyValuePair<string, int>("zero", 0);
+            KeyValuePair<string, int> pair = new("zero", 0);
             Assert.IsFalse(testDict.Remove(pair));
         }
 
@@ -227,15 +227,15 @@ namespace JavaUtilitiesTests.Collections{
         [Test]
         public void GetEnumerator(){
             IEnumerator<KeyValuePair<string, int>> enumerator = testDict.GetEnumerator();
-            List<KeyValuePair<string, int>> result = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> result = [];
             while(enumerator.MoveNext()){
                 result.Add(enumerator.Current);
             }
             Assert.Multiple(() => {
                 Assert.AreEqual(3, result.Count);
-                Assert.IsTrue(result.Contains(new KeyValuePair<string, int>("one", 1)));
-                Assert.IsTrue(result.Contains(new KeyValuePair<string, int>("two", 2)));
-                Assert.IsTrue(result.Contains(new KeyValuePair<string, int>("three", 3)));
+                Assert.IsTrue(result.Contains(new("one", 1)));
+                Assert.IsTrue(result.Contains(new("two", 2)));
+                Assert.IsTrue(result.Contains(new("three", 3)));
             });
         }
     }

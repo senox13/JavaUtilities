@@ -16,8 +16,8 @@ namespace JavaUtilities{
         /// <param name="keys">An <see cref="IEnumerable{K}"/> to use values from as keys in the new dictionary</param>
         /// <param name="values">An <see cref="IEnumerable{V}"/> to use values from as keys in the new dictionary</param>
         /// <returns>A new dictionary containing values from the two given enumerables</returns>
-        public static Dictionary<K, V> CreateDict<K, V>(IEnumerable<K> keys, IEnumerable<V> values){
-            return PopulateDict(keys, values, new Dictionary<K, V>());
+        public static Dictionary<K, V> CreateDict<K, V>(IEnumerable<K> keys, IEnumerable<V> values) where K : notnull{
+            return PopulateDict(keys, values, []);
         }
         
         /// <summary>
@@ -34,7 +34,7 @@ namespace JavaUtilities{
         /// <param name="values">An <see cref="IEnumerable{V}"/> to use values from as keys in the new dictionary</param>
         /// <param name="dict">The dictionary to populate with values</param>
         /// <returns>The same dictionary that was given as an argument, populated with the given values</returns>
-        public static Dictionary<K, V> PopulateDict<K, V>(IEnumerable<K> keys, IEnumerable<V> values, Dictionary<K, V> dict){
+        public static Dictionary<K, V> PopulateDict<K, V>(IEnumerable<K> keys, IEnumerable<V> values, Dictionary<K, V> dict) where K : notnull{
             IEnumerator<K> keyEnum = keys.GetEnumerator();
             IEnumerator<V> valEnum = values.GetEnumerator();
             while(keyEnum.MoveNext() && valEnum.MoveNext()){
@@ -53,7 +53,7 @@ namespace JavaUtilities{
         /// <typeparam name="V">The type of the values in the given dictionary</typeparam>
         /// <param name="dict">The dictionary to generate a hashcode for</param>
         /// <returns>A hash code for the given dictionary</returns>
-        public static int ContentsHashCode<K, V>(Dictionary<K, V> dict){
+        public static int ContentsHashCode<K, V>(Dictionary<K, V>? dict) where K : notnull{
             int hash = 0;
             if(dict == null){
                 return hash;

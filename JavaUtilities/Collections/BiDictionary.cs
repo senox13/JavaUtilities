@@ -15,9 +15,29 @@ namespace JavaUtilities.Collections{
         /*
          * Fields
          */
-        private readonly Dictionary<TKey, TValue> keyToValue;
-        private readonly Dictionary<TValue, TKey> valueToKey;
+        private const int DEFAULT_CAPACITY = 4;
+        private readonly Dictionary<KeyWrapper<TKey>, TValue> keyToValue;
+        private readonly Dictionary<KeyWrapper<TValue>, TKey> valueToKey;
         
+
+        /*
+         * Nested types
+         */
+        private readonly struct KeyWrapper<T>(T? key){
+            public T? Key{get;} = key;
+
+            public override bool Equals(object? obj){
+                if(obj is not KeyWrapper<T> other){
+                    return false;
+                }
+                return other.Key?.Equals(Key) ?? (Key == null && other.Key == null);
+            }
+
+            public override int GetHashCode(){
+                return Key?.GetHashCode() ?? 0;
+            }
+        }
+
         
         /*
          * Constructors
@@ -28,23 +48,12 @@ namespace JavaUtilities.Collections{
         /// </summary>
         /// <param name="pairs">The enumerable containing entries for the
         /// new dictionary</param>
-        public BiDictionary(IEnumerable<KeyValuePair<TKey, TValue>> pairs){
-            int count = pairs.Count();
-            keyToValue = new Dictionary<TKey, TValue>(count);
-            valueToKey = new Dictionary<TValue, TKey>(count);
+        public BiDictionary(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
+            :this(pairs.Count()){
             foreach(KeyValuePair<TKey, TValue> pair in pairs){
                 Add(pair.Key, pair.Value);
             }
         }
-        
-        /// <summary>
-        /// Constructs a new <see cref="BiDictionary{TKey, TValue}"/>
-        /// containing the contents of the given <see cref="IDictionary{TKey, TValue}"/>.
-        /// </summary>
-        /// <param name="dictIn">The dictionary containing entries for the
-        /// new dictionary</param>
-        public BiDictionary(IDictionary<TKey, TValue> dictIn)
-            :this((IEnumerable<KeyValuePair<TKey, TValue>>)dictIn){}
         
         /// <summary>
         /// Constructs a new, empty <see cref="BiDictionary{TKey, TValue}"/>
@@ -52,14 +61,15 @@ namespace JavaUtilities.Collections{
         /// </summary>
         /// <param name="capacity">The number of entries to pre-allocate
         /// memory for</param>
-        public BiDictionary(int capacity)
-            :this(new Dictionary<TKey, TValue>(capacity)){}
+        public BiDictionary(int capacity){
+            keyToValue = new(capacity);
+            valueToKey = new(capacity);
+        }
 
         /// <summary>
         /// Constructs a new, empty <see cref="BiDictionary{TKey, TValue}"/>.
         /// </summary>
-        public BiDictionary()
-            :this(new Dictionary<TKey, TValue>()){}
+        public BiDictionary() : this(DEFAULT_CAPACITY){}
 
 
         /*
@@ -67,10 +77,10 @@ namespace JavaUtilities.Collections{
          */
         /// <inheritdoc/>
         public TValue this[TKey key]{
-            get => keyToValue[key];
+            get => keyToValue[new(key)];
             set{
-                keyToValue[key] = value;
-                valueToKey[value] = key;
+                keyToValue[new(key)] = value;
+                valueToKey[new(value)] = key;
             }
         }
 
@@ -80,18 +90,18 @@ namespace JavaUtilities.Collections{
         /// <param name="val">The value of the element to get or set</param>
         /// <returns>The key for the given value</returns>
         public TKey this[TValue val]{
-            get => valueToKey[val];
+            get => valueToKey[new(val)];
             set{
-                valueToKey[val] = value;
-                keyToValue[value] = val;
+                valueToKey[new(val)] = value;
+                keyToValue[new(value)] = val;
             }
         }
 
         /// <inheritdoc/>
-        public ICollection<TKey> Keys => keyToValue.Keys;
+        public ICollection<TKey> Keys => valueToKey.Values;
 
         /// <inheritdoc/>
-        public ICollection<TValue> Values => valueToKey.Keys;
+        public ICollection<TValue> Values => keyToValue.Values;
 
         /// <inheritdoc/>
         public int Count => keyToValue.Count;
@@ -111,7 +121,7 @@ namespace JavaUtilities.Collections{
         /// <returns><c>true</c> if the dictionary contains an element with
         /// the key; otherwise, <c>false</c></returns>
         public bool ContainsValue(TValue value){
-            return valueToKey.ContainsKey(value);
+            return keyToValue.ContainsValue(value);
         }
 
         /// <summary>
@@ -123,11 +133,12 @@ namespace JavaUtilities.Collections{
         /// otherwise, <c>false</c>. This method also returns false if key
         /// was not found in the original dictionary</returns>
         public bool Remove(TValue value){
-            if(!valueToKey.ContainsKey(value)){
+            if(!keyToValue.ContainsValue(value)){
                 return false;
             }
-            TKey key = valueToKey[value];
-            if(valueToKey.Remove(value) != keyToValue.Remove(key)){
+            KeyWrapper<TValue> valueWrapper = new(value);
+            TKey key = valueToKey[valueWrapper];
+            if(valueToKey.Remove(valueWrapper) != keyToValue.Remove(new(key))){
                 throw new Exception("BiDictionary internal dictionaries are out of sync, something has gone very wrong");
             }
             return true;
@@ -144,7 +155,7 @@ namespace JavaUtilities.Collections{
         /// <returns><c>true</c> if the <see cref="BiDictionary{TKey, TValue}"/>
         /// contains an element with the specified key; otherwise, <c>false</c></returns>
         public bool TryGetKey(TValue value, out TKey key){
-            return valueToKey.TryGetValue(value, out key);
+            return valueToKey.TryGetValue(new(value), out key!);
         }
 
 
@@ -153,22 +164,23 @@ namespace JavaUtilities.Collections{
          */
         /// <inheritdoc/>
         public void Add(TKey key, TValue value){
-            keyToValue.Add(key, value);
-            valueToKey.Add(value, key);
+            keyToValue.Add(new(key), value);
+            valueToKey.Add(new(value), key);
         }
 
         /// <inheritdoc/>
         public bool ContainsKey(TKey key){
-            return keyToValue.ContainsKey(key);
+            return valueToKey.ContainsValue(key);
         }
 
         /// <inheritdoc/>
         public bool Remove(TKey key){
-            if(!keyToValue.ContainsKey(key)){
+            if(!valueToKey.ContainsValue(key)){
                 return false;
             }
-            TValue value = keyToValue[key];
-            if(keyToValue.Remove(key) != valueToKey.Remove(value)){
+            KeyWrapper<TKey> keyWrapper = new(key);
+            TValue value = keyToValue[keyWrapper];
+            if(keyToValue.Remove(keyWrapper) != valueToKey.Remove(new(value))){
                 throw new Exception("BiDictionary internal dictionaries are out of sync, something has gone very wrong");
             }
             return true;
@@ -176,7 +188,7 @@ namespace JavaUtilities.Collections{
 
         /// <inheritdoc/>
         public bool TryGetValue(TKey key, out TValue value){
-            return keyToValue.TryGetValue(key, out value);
+            return keyToValue.TryGetValue(new(key), out value!);
         }
         
 
@@ -185,8 +197,8 @@ namespace JavaUtilities.Collections{
          */
         /// <inheritdoc/>
         public void Add(KeyValuePair<TKey, TValue> item){
-            keyToValue.Add(item.Key, item.Value);
-            valueToKey.Add(item.Value, item.Key);
+            keyToValue.Add(new(item.Key), item.Value);
+            valueToKey.Add(new(item.Value), item.Key);
         }
         
         /// <inheritdoc/>
@@ -197,8 +209,8 @@ namespace JavaUtilities.Collections{
         
         /// <inheritdoc/>
         public bool Contains(KeyValuePair<TKey, TValue> item){
-            if(keyToValue.ContainsKey(item.Key)){
-                return keyToValue[item.Key].Equals(item.Value);
+            if(valueToKey.ContainsValue(item.Key)){
+                return keyToValue[new(item.Key)]?.Equals(item.Value) ?? item.Value == null;
             }
             return false;
         }
@@ -206,14 +218,16 @@ namespace JavaUtilities.Collections{
         /// <inheritdoc/>
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex){
             int i=arrayIndex;
-            foreach(KeyValuePair<TKey, TValue> pair in keyToValue){
-                array[i++] = pair;
+            foreach(KeyValuePair<KeyWrapper<TKey>, TValue> pair in keyToValue){
+                array[i++] = new KeyValuePair<TKey, TValue>(pair.Key.Key!, pair.Value);
             }
         }
         
         /// <inheritdoc/>
         public bool Remove(KeyValuePair<TKey, TValue> item){
-            if(keyToValue.Remove(item.Key) && valueToKey.Remove(item.Value)){
+            if(Contains(item)){
+                keyToValue.Remove(new(item.Key));
+                valueToKey.Remove(new(item.Value));
                 return true;
             }
             return false;
@@ -225,7 +239,9 @@ namespace JavaUtilities.Collections{
          */
         /// <inheritdoc/>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator(){
-            return keyToValue.GetEnumerator();
+            return keyToValue
+                .Select(p => new KeyValuePair<TKey, TValue>(p.Key.Key ?? default!, p.Value))
+                .GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator(){
